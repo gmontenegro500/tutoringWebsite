@@ -1,12 +1,16 @@
 {
-  "name": "mean-vw-package",
+  "name": "wowchimps",
   "version": "1.0.0",
-  "description": "Pagina tutoriales en MEAN stack",
+  "description": "Autorias por Skype para wowchimps",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "German",
+  "keywords": [
+    "Mean",
+    "Stack"
+  ],
+  "author": "Jonn Jordan",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.0",
@@ -14,8 +18,10 @@
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "express-validator": "^3.1.2",
+    "mongodb": "^2.2.19",
     "mongoose": "^4.7.6",
     "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
     "passport-local": "^1.0.0"
   }
 }

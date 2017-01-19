@@ -16,7 +16,9 @@ let UserSchema = mongoose.Schema({
         type: String
     }
 });
-let User = mongoose.model('users', UserSchema);
+
+let User = mongoose.model('User', UserSchema);
+
 User.createUser = (newUser, cb) => {
     bcryptjs.genSalt(10, (err, salt) => {
         bcryptjs.hash(newUser.password, salt, (err, hash) => {
@@ -24,6 +26,23 @@ User.createUser = (newUser, cb) => {
             newUser.save(cb);
         });
     });
+};
+
+User.updateUser = (id, newUser, cb) => {
+    User.findByIdAndUpdate(id, { $set: newUser }, { new: true }, cb);
+};
+
+User.updatePassword = (id, password, cb) => {
+    bcryptjs.genSalt(10, (err, salt) => {
+        bcryptjs.hash(password, salt, (err, hash) => {
+            password = hash;
+            User.findByIdAndUpdate(id, { $set: { password: password } }, { new: true }, cb);
+        });
+    });
+};
+
+User.removeUser = (id, cb) => {
+    User.findByIdAndRemove(id, cb);
 };
 
 module.exports = User;
