@@ -1,5 +1,7 @@
 const express = require ('express');
 const router = express.Router();
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 let User = require('../models/user');
 
@@ -101,6 +103,56 @@ router.delete('/:id', (req, res) => {
 
     });
 
+});
+
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return res.status(401).json({
+                error: info
+            });
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                return res.status(500).json({
+                    error: 'Could not log in user'
+                });
+            }
+
+            res.status(200).json({
+                msg: 'Login successful!'
+            });
+        });
+    })(req, res, next);
+});
+
+router.get('/logout', (req, res) => {
+    req.logOut();
+    res.status(200).json({
+        msg: 'Logout successful!'
+    });
+});
+
+router.get('/status', (req, res) => {
+    if (!req.isAuthenticated()) {
+        return res.status(200).json({
+            status: false
+        });
+    }
+
+    res.status(200).json({
+        status: true
+    });
+});
+
+router.get('/info', User.isLoggedIn, (req, res) => {
+    res.status(200).json({
+        message: 'Todo bien!!'
+    })
 });
 
 module.exports = router;

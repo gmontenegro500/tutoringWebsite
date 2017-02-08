@@ -7,12 +7,12 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/mean-auth');
+mongoose.connect('mongodb://192.168.81.222/mean-auth');
 
 const db = mongoose.connection;
 
 const app = express();
-
+const User = require('./models/user');
 const users = require('./api/users');
 const videos = require('./api/videos');
 
@@ -47,9 +47,40 @@ app.use(expressValidator({
     }
 }));
 
+passport.use(new LocalStrategy((username, password, done) => {
+    User.getUserByUsername(username, (err, user) => {
+
+        if (err) throw err;
+
+        if (!user) {
+            return done(null, false, { message: 'Incorrect username..'});
+        }
+
+        User.comparePassword(password, user.password, (err, isMatch) => {
+
+            if (err) throw err;
+
+            if(isMatch)
+                return done(null, user);
+            else
+                return done(null, false, { message: 'Incorrect password..'});
+        });
+    });
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user._id);
+});
+
+passport.deserializeUser((id, done) => {
+    User.getUserById(id, (err, user) => {
+        done(err, user);
+    });
+});
+
 app.use('/user', users);
 app.use('/video', videos);
 
-app.listen(3000, () => {
-    console.log('Server listen on port 3000');
+app.listen(3002, () => {
+    console.log('Server listen on port 3002');
 })

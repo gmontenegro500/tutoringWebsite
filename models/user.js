@@ -45,4 +45,32 @@ User.removeUser = (id, cb) => {
     User.findByIdAndRemove(id, cb);
 };
 
+User.getUserByUsername = (username, cb) => {
+    User.findOne({ username: username }, cb);
+}
+
+User.getUserById = (id, cb) => {
+    User.findById(id, cb);
+}
+
+User.comparePassword = (candidatePassword, hash, cb) => {
+    bcryptjs.compare(candidatePassword, hash, (err, isMatch) => {
+        
+        if (err) throw err;
+
+        cb(null, isMatch);
+
+    });
+};
+
+User.isLoggedIn = (req, res, next) => {
+
+    if (req.isAuthenticated())
+        return next();
+
+    res.status(401).json({
+        msg: 'Debes haber iniciado sesion'
+    });
+};
+
 module.exports = User;
